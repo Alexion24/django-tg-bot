@@ -1,0 +1,29 @@
+pytz==2022.5
+requests
+python-dotenv==0.21.0
+
+# Django
+django==4.1.2
+django-cors-headers==3.13.0
+django-debug-toolbar==3.7.0
+django-bootstrap4==22.2; python_version >= "3.7"
+whitenoise==6.2.0  # for serving static files
+
+# Django 3.0 async requirements
+gunicorn==20.1.0
+uvicorn==0.19.0
+
+# Databases
+psycopg2-binary==2.9.5
+dj-database-url==1.0.0
+
+# Distributed async tasks
+celery==5.2.7
+redis==4.3.4
+django-celery-beat==2.4.0
+
+# Telegram
+python-telegram-bot==13.14  # last sync version
+
+# monitoring
+# sentry-sdk

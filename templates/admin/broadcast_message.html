@@ -1,10 +1,19 @@
-{% extends "admin/base_site.html" %}
-
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% bootstrap_messages %}
+{% block title %}{{ title }}{% endblock %}
 {% block content %}
-<form action="" method="post">{% csrf_token %}
-    {{ form }}
-    <input type="hidden" name="action" value="broadcast" />
-    <input type="submit" name="apply" value="Send" />
-</form>
+<div class="container wrapper flex-grow-1">
+    <div class="card">
+        <div class="card-body p-5 bg-light">
+            <h1 class="my-4">{{ title }}</h1>
+            <form method="post">
+                {% csrf_token %}
+                {% bootstrap_form form %}
+                {% bootstrap_button button_text button_type="submit" button_class="btn-primary" %}
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 

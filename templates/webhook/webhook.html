@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load bootstrap4 %}
+{% bootstrap_messages %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="container wrapper flex-grow-1">
+    <div class="card">
+        <div class="card-body p-5 bg-light">
+            <h1 class="my-4">{{ title }}</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>received_at</th>
+                        <th>payload</th>
+                        <th></th>
+                    </tr>
+                    {% for message in webhook %}
+                    <tr>
+                        <td>{{ message.id }}</td>
+                        <td>{{ message.received_at }}</td>
+                        <td>{{ message.payload }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -22,12 +22,15 @@ from . import views
 
 urlpatterns = [
     path('tgadmin/', admin.site.urls),
+    path('broadcast/', views.BroadcastMessageView.as_view(), name='broadcast'),
     path('__debug__/', include(debug_toolbar.urls)),
 
     path('', views.IndexView.as_view(), name='index'),
+    path('profile/', views.ProfileView.as_view(), name='profile'),
     path('login/', views.LoginUserView.as_view(), name='login'),
     path('logout/', views.LogoutUserView.as_view(), name='logout'),
     path('create/', views.CreateUserView.as_view(), name='create'),
 
-    path('webhook/', csrf_exempt(views.TelegramBotWebhookView.as_view())),
+    path('profile/webhook/', csrf_exempt(views.TelegramBotWebhookView.as_view())),
+    path('webhooklist/', views.WebhookListView.as_view())
 ]

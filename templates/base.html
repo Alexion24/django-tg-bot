@@ -19,6 +19,9 @@
         <div class="navbar-collapse collapse" id="navbarToggleExternalContent" style="">
             <ul class="navbar-nav">
                 {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                        <a class="nav-link" href="{% url 'broadcast' %}">Broadcast message</a>
+                    {% endif %}
                 <li  class="nav-item">
                     <a class="nav-link" href="{% url 'logout' %}">Log out</a>
                 </li>

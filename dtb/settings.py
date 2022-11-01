@@ -105,9 +105,9 @@ DATABASES = {
     }
 }
 
-# database = dj_database_url.config(conn_max_age=500)
-#
-# DATABASES['default'].update(database)
+database = dj_database_url.config(conn_max_age=500)
+
+DATABASES['default'].update(database)
 
 
 # Password validation

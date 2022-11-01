@@ -11,9 +11,11 @@
             <div class="display-4">Hello from Alexion!</div>
             <hr>
             {% if user.is_authenticated %}
-                <a class="btn btn-primary btn-lg" target="_blank" href="https://t.me/django_celery_test_bot">Start dialog</a>
+                <h3 class="my-4">Check out Profile page for start dialog with bot!</h3>
+                <a class="btn btn-primary btn-lg" href="/profile/">Profile</a>
             {% else %}
-                <a class="nav-link" href="{% url 'login' %}">Log in</a>
+                <h3 class="my-4">Please log in and get access to profile!</h3>
+                <a class="btn btn-primary btn-lg" href="{% url 'login' %}">Log in</a>
             {% endif %}
         </div>
     </div>

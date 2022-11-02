@@ -32,5 +32,5 @@ urlpatterns = [
     path('create/', views.CreateUserView.as_view(), name='create'),
 
     path('profile/webhook/', csrf_exempt(views.TelegramBotWebhookView.as_view())),
-    path('webhooklist/', views.WebhookListView.as_view())
+    path('webhooklist/', views.WebhookListView.as_view(), name='webhook-message-list')
 ]

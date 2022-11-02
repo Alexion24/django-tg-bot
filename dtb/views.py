@@ -21,7 +21,7 @@ from dtb.settings import TELEGRAM_TOKEN
 
 logger = logging.getLogger(__name__)
 TELEGRAM_URL = "https://api.telegram.org/bot"
-PROFILE_URL = 'https://94ff-46-146-120-138.eu.ngrok.io/profile/'
+PROFILE_URL = 'https://8bc6-46-146-120-138.eu.ngrok.io/profile/'
 
 
 class IndexView(TemplateView):
@@ -70,13 +70,10 @@ class BroadcastMessageView(TemplateView):
         users = User.objects.all()
         for u in users:
             TelegramBotWebhookView.send_message(
-                request.POST.get('broadcast_text'),
+                f'Hello, {u.username}!\n{request.POST.get("broadcast_text")}',
                 u.chat_id
             )
-            TelegramBotWebhookView.send_message(
-                f'Hello, {u.username}',
-                u.chat_id
-            )
+
         return HttpResponseRedirect(reverse_lazy("profile"))
 
 
@@ -128,13 +125,13 @@ class TelegramBotWebhookView(View):
         t_data = json.loads(request.body)
         print(json.dumps(t_data))
         WebhookMessage.objects.create(payload=json.dumps(t_data))
-        t_message = t_data["message"]
-        t_chat = t_message["chat"]
         response = {"ok": "POST request processed"}
 
-        try:
+        if t_data.get('message'):
+            t_message = t_data["message"]
+            t_chat = t_message["chat"]
             text = t_message["text"].strip().lower()
-        except Exception as e:
+        else:
             return JsonResponse(response)
 
         text = text.lstrip('/')
@@ -169,7 +166,6 @@ class TelegramBotWebhookView(View):
             msg = f"Wrong unique key!\nPlease get your unique key, visit {PROFILE_URL}"
             self.send_message(msg, chat)
 
-
     @staticmethod
     def send_message(message, chat_id):
         data = {
@@ -189,6 +185,7 @@ class WebhookListView(ListView):
 
     model = WebhookMessage
     template_name = 'webhook/webhook.html'
+    success_url = reverse_lazy('webhook-message-list')
     context_object_name = 'webhook'
 
     def get_context_data(self, **kwargs):

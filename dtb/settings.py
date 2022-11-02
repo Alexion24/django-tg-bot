@@ -38,12 +38,10 @@ INSTALLED_APPS = [
 
     # 3rd party apps
     'bootstrap4',
-    'django_celery_beat',
     'debug_toolbar',
 
     # local apps
-    'tg_users.apps.UsersConfig',
-    'users.apps.UsersConfig',
+    'tg_bot.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -66,13 +64,13 @@ INTERNAL_IPS = [
     '127.0.0.1',
     # ...
 ]
-
+CSRF_TRUSTED_ORIGINS = ["https://8bc6-46-146-120-138.eu.ngrok.io", 'https://*.127.0.0.1']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
 ROOT_URLCONF = 'dtb.urls'
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'tg_bot.TgUser'
 LOGIN_REDIRECT_URL = '/'
 
 TEMPLATES = [

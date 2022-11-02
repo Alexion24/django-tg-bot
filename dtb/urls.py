@@ -29,7 +29,7 @@ urlpatterns = [
     path('profile/', views.ProfileView.as_view(), name='profile'),
     path('login/', views.LoginUserView.as_view(), name='login'),
     path('logout/', views.LogoutUserView.as_view(), name='logout'),
-    path('create/', views.CreateUserView.as_view(), name='create'),
+    path('register/', views.RegisterUserView.as_view(), name='registration'),
 
     path('profile/webhook/', csrf_exempt(views.TelegramBotWebhookView.as_view())),
     path('webhooklist/', views.WebhookListView.as_view(), name='webhook-message-list')

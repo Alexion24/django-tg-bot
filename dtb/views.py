@@ -12,10 +12,8 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
 
-from django.contrib.auth.models import User
-from users.models import User
-from users.forms import CreateUserForm, BroadcastForm
-from tg_users.models import WebhookMessage, TgUser
+from tg_bot.forms import RegistrationForm, BroadcastForm
+from tg_bot.models import WebhookMessage, TgUser
 from dtb.settings import TELEGRAM_TOKEN
 
 
@@ -37,14 +35,14 @@ class ProfileView(TemplateView):
     template_name = 'profile.html'
 
     def get(self, request, *args, **kwargs):
-        u_id = uuid.uuid4()
+        tg_key = uuid.uuid4()
         user_id = request.user.id
-        user = User.objects.get(id=user_id)
-        user.u_id = u_id
+        user = TgUser.objects.get(id=user_id)
+        user.tg_key = tg_key
         user.save()
         data = {
-            "start": f"https://t.me/django_celery_test_bot?start={u_id}",
-            "get_unique_key": f'Ваш уникальный ключ: {u_id}'
+            "start": f"https://t.me/django_celery_test_bot?start={tg_key}",
+            "get_unique_key": f'Ваш уникальный ключ: {tg_key}'
         }
         return render(request, template_name=self.template_name, context=data)
 
@@ -67,7 +65,7 @@ class BroadcastMessageView(TemplateView):
         )
 
     def post(self, request, *args, **kwargs):
-        users = User.objects.all()
+        users = TgUser.objects.all()
         for u in users:
             TelegramBotWebhookView.send_message(
                 f'Hello, {u.username}!\n{request.POST.get("broadcast_text")}',
@@ -77,11 +75,11 @@ class BroadcastMessageView(TemplateView):
         return HttpResponseRedirect(reverse_lazy("profile"))
 
 
-class CreateUserView(SuccessMessageMixin, CreateView):
+class RegisterUserView(SuccessMessageMixin, CreateView):
 
-    model = User
+    model = TgUser
     template_name = 'form.html'
-    form_class = CreateUserForm
+    form_class = RegistrationForm
     success_url = reverse_lazy('login')
     success_message = 'User successfully registered.'
 
@@ -122,20 +120,22 @@ class TelegramBotWebhookView(View):
 
     def post(self, request, *args, **kwargs):
 
-        t_data = json.loads(request.body)
-        print(json.dumps(t_data))
-        WebhookMessage.objects.create(payload=json.dumps(t_data))
+        tg_data = json.loads(request.body)
+        print(json.dumps(tg_data))
+        WebhookMessage.objects.create(payload=json.dumps(tg_data))
         response = {"ok": "POST request processed"}
 
-        if t_data.get('message'):
-            t_message = t_data["message"]
-            t_chat = t_message["chat"]
-            text = t_message["text"].strip().lower()
+        if tg_data.get('message'):
+            tg_message = tg_data["message"]
+            tg_chat = tg_message["chat"]
+            text = tg_message["text"].strip().lower()
+            tg_id = tg_message["from"]["id"]
+            tg_username = tg_message["from"]["username"]
         else:
             return JsonResponse(response)
 
         text = text.lstrip('/')
-        chat = t_chat["id"]
+        chat = tg_chat["id"]
         text_is_u_id = False
 
         if text.startswith('start') and len(text) > 10:
@@ -150,19 +150,19 @@ class TelegramBotWebhookView(View):
             text_is_u_id = True
 
         if text_is_u_id:
-            self.user_check(text, chat)
+            self.get_user_data(tg_id, tg_username, text, chat)
 
         return JsonResponse(response)
 
-    def user_check(self, text, chat):
-
-        try:
-            user = User.objects.get(u_id=text)
+    def get_user_data(self, tg_id, tg_username, text, chat):
+        if user := TgUser.objects.get(tg_key=text):
             user.chat_id = chat
+            user.tg_id = tg_id
+            user.tg_username = tg_username
             user.save()
             msg = "You successfully registered!"
             self.send_message(msg, chat)
-        except User.DoesNotExist:
+        else:
             msg = f"Wrong unique key!\nPlease get your unique key, visit {PROFILE_URL}"
             self.send_message(msg, chat)
 
